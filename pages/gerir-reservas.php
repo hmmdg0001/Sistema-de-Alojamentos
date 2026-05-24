@@ -1,4 +1,5 @@
 <?php
+# Antes de começar o programa necessita o config.php, auth.php e reservas.php
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
 require_once '../includes/reservas.php';
@@ -8,10 +9,12 @@ $gestorId = $_SESSION['user_id'];
 $erro = '';
 $sucesso = '';
 
+# Processar alteração de estado de uma reserva
 if (isset($_POST['acao'], $_POST['reserva_id'])) {
     $reservaId = (int)$_POST['reserva_id'];
-    $acao = $_POST['acao'];
+    $acao = $_POST['acao']; 
 
+    # Traduz a ação do formulário para o valor da coluna estado
     $estados = [
         'confirmar'  => 'confirmada',
         'cancelar'   => 'cancelada',
@@ -37,15 +40,15 @@ $estadosFiltro = ['', 'pendente', 'confirmada', 'concluida', 'cancelada'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerir Reservas — StayManager</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Gerir Reservas — AlojamentosOnline</title>
+    <?php include '../includes/head-css.php'; ?>
     <style>
         .filtros { display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem; }
         .filtros a {
             padding:.4rem .9rem;border-radius:20px;font-size:.85rem;text-decoration:none;
             border:1px solid var(--border);color:var(--muted);transition:all .2s;
         }
-        .filtros a:hover, .filtros a.ativo { border-color:var(--accent);color:var(--accent);background:rgba(201,169,110,.08); }
+        .filtros a:hover, .filtros a.ativo { border-color:var(--accent);color:var(--accent);background:var(--accent-light); }
         .acoes-cell { display:flex;gap:.4rem;flex-wrap:wrap; }
     </style>
 </head>
@@ -110,6 +113,7 @@ $estadosFiltro = ['', 'pendente', 'confirmada', 'concluida', 'cancelada'];
                         <td>
                             <div class="acoes-cell">
                                 <?php if ($r['estado'] === 'pendente'): ?>
+                                <!-- Gestor aceita ou recusa pedido inicial -->
                                 <form method="POST">
                                     <input type="hidden" name="reserva_id" value="<?= $r['id'] ?>">
                                     <button type="submit" name="acao" value="confirmar" class="btn btn-success btn-sm">Confirmar</button>
@@ -119,6 +123,7 @@ $estadosFiltro = ['', 'pendente', 'confirmada', 'concluida', 'cancelada'];
                                     <button type="submit" name="acao" value="cancelar" class="btn btn-danger btn-sm">Recusar</button>
                                 </form>
                                 <?php elseif ($r['estado'] === 'confirmada'): ?>
+                                <!-- Após a estadia, marcar como concluída (hóspede pode avaliar) -->
                                 <form method="POST" onsubmit="return confirm('Marcar como concluída?')">
                                     <input type="hidden" name="reserva_id" value="<?= $r['id'] ?>">
                                     <button type="submit" name="acao" value="concluir" class="btn btn-primary btn-sm">Concluir</button>
@@ -145,7 +150,6 @@ $estadosFiltro = ['', 'pendente', 'confirmada', 'concluida', 'cancelada'];
         <?php endif; ?>
     </div>
 </main>
-
-<footer><p>© <?= date('Y') ?> StayManager — Henrique Marinho</p></footer>
+<footer><p>© <?= date('Y') ?> AlojamentosOnline — Henrique Marinho</p></footer>
 </body>
 </html>

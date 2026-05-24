@@ -1,12 +1,10 @@
 <?php
-// includes/reservas.php — Funções de gestão de reservas
-
+# Antes de começar o programa necessita o config.php
 require_once __DIR__ . '/config.php';
 
-function verificarDisponibilidade(int $alojamentoId, string $checkin, string $checkout): bool {
+function verificarDisponibilidade(int $alojamentoId, string $checkin, string $checkout): bool { # Função que vai verificar a disponibilidade dos alojamentos
     $pdo = conectar();
 
-    // Verificar conflito com reservas existentes
     $stmt = $pdo->prepare("
         SELECT COUNT(*) FROM reservas
         WHERE alojamento_id = ?
@@ -17,7 +15,6 @@ function verificarDisponibilidade(int $alojamentoId, string $checkin, string $ch
     $stmt->execute([$alojamentoId, $checkout, $checkin]);
     if ($stmt->fetchColumn() > 0) return false;
 
-    // Verificar datas bloqueadas pelo gestor
     $stmt2 = $pdo->prepare("
         SELECT COUNT(*) FROM datas_bloqueadas
         WHERE alojamento_id = ?
@@ -28,30 +25,30 @@ function verificarDisponibilidade(int $alojamentoId, string $checkin, string $ch
     return $stmt2->fetchColumn() == 0;
 }
 
-function criarReserva(int $alojamentoId, int $hospedeId, string $checkin, string $checkout, int $numHospedes, string $notas = ''): int|false {
+
+function criarReserva(int $alojamentoId, int $hospedeId, string $checkin, string $checkout, int $numHospedes, string $notas = ''): int|false { # Função que cria Reservas
     $pdo = conectar();
 
-    // Calcular noites e preço
     $aloj = $pdo->prepare("SELECT preco_noite, estadia_minima FROM alojamentos WHERE id = ?");
     $aloj->execute([$alojamentoId]);
     $alojamento = $aloj->fetch();
     if (!$alojamento) return false;
 
-    $noites = (new DateTime($checkout))->diff(new DateTime($checkin))->days;
-    if ($noites < $alojamento['estadia_minima']) return false;
-    if (!verificarDisponibilidade($alojamentoId, $checkin, $checkout)) return false;
+    $noites = (new DateTime($checkout))->diff(new DateTime($checkin))->days; # Calcula as noites e impede que existam 2 reservas no mesmo dia
+    if ($noites < $alojamento['estadia_minima']) return false; # Vericica a estadia minima
+    if (!verificarDisponibilidade($alojamentoId, $checkin, $checkout)) return false; # Verifica se o alojamento está disponivel
 
-    $precoTotal = $noites * $alojamento['preco_noite'];
+    $precoTotal = $noites * $alojamento['preco_noite']; # Calcula o preço total
 
     $stmt = $pdo->prepare("
         INSERT INTO reservas (alojamento_id, hospede_id, data_checkin, data_checkout, num_hospedes, preco_total, notas)
         VALUES (?, ?, ?, ?, ?, ?, ?)
-    ");
+    "); # Insere na base de dados a reserva
     $stmt->execute([$alojamentoId, $hospedeId, $checkin, $checkout, $numHospedes, $precoTotal, $notas]);
     return (int) $pdo->lastInsertId();
 }
 
-function cancelarReserva(int $reservaId, int $utilizadorId): bool {
+function cancelarReserva(int $reservaId, int $utilizadorId): bool { #Função que cancela reservas
     $pdo = conectar();
     $stmt = $pdo->prepare("
         UPDATE reservas SET estado = 'cancelada'
@@ -62,14 +59,14 @@ function cancelarReserva(int $reservaId, int $utilizadorId): bool {
     return $stmt->rowCount() > 0;
 }
 
-function confirmarReserva(int $reservaId): bool {
+function confirmarReserva(int $reservaId): bool { # Função unica para o gestor que permite aceitar ou recusar  uma reserva pendente
     $pdo = conectar();
     $stmt = $pdo->prepare("UPDATE reservas SET estado = 'confirmada' WHERE id = ? AND estado = 'pendente'");
     $stmt->execute([$reservaId]);
     return $stmt->rowCount() > 0;
 }
 
-function obterReservasHospede(int $hospedeId): array {
+function obterReservasHospede(int $hospedeId): array { # Função que obtem as reservas todas feitas por um cliente
     $pdo = conectar();
     $stmt = $pdo->prepare("
         SELECT r.*, a.nome AS alojamento_nome, a.localizacao
@@ -82,7 +79,7 @@ function obterReservasHospede(int $hospedeId): array {
     return $stmt->fetchAll();
 }
 
-function obterTodasReservas(): array {
+function obterTodasReservas(): array { # Função que lista todas as reservas feitas - Exclusivo para os gestores
     $pdo = conectar();
     return $pdo->query("
         SELECT r.*, a.nome AS alojamento_nome, u.nome AS hospede_nome
@@ -93,7 +90,7 @@ function obterTodasReservas(): array {
     ")->fetchAll();
 }
 
-function datasOcupadas(int $alojamentoId): array {
+function datasOcupadas(int $alojamentoId): array { # Função que lista as datas ocupadas
     $pdo = conectar();
     $stmt = $pdo->prepare("
         SELECT data_checkin, data_checkout FROM reservas
@@ -106,7 +103,7 @@ function datasOcupadas(int $alojamentoId): array {
     return $stmt->fetchAll();
 }
 
-function obterReservasGestor(int $gestorId, ?string $estado = null): array {
+function obterReservasGestor(int $gestorId, ?string $estado = null): array { # Função exclusiva do gestor que mosta as reservas de um alojamento
     $pdo = conectar();
     $sql = "
         SELECT r.*, a.nome AS alojamento_nome, a.localizacao, u.nome AS hospede_nome, u.email AS hospede_email
@@ -126,7 +123,7 @@ function obterReservasGestor(int $gestorId, ?string $estado = null): array {
     return $stmt->fetchAll();
 }
 
-function reservaPertenceGestor(int $reservaId, int $gestorId): bool {
+function reservaPertenceGestor(int $reservaId, int $gestorId): bool { # Função que confirma que a reserva é de um alojamento deste gestor
     $pdo = conectar();
     $stmt = $pdo->prepare("
         SELECT r.id FROM reservas r
@@ -137,7 +134,7 @@ function reservaPertenceGestor(int $reservaId, int $gestorId): bool {
     return (bool) $stmt->fetch();
 }
 
-function atualizarEstadoReservaGestor(int $reservaId, int $gestorId, string $estado): bool {
+function atualizarEstadoReservaGestor(int $reservaId, int $gestorId, string $estado): bool { # Função que vai alterar o estado da reserva, o mesmo só acontece se pertencer ao gestor e estado for válido
     if (!reservaPertenceGestor($reservaId, $gestorId)) {
         return false;
     }
@@ -151,7 +148,7 @@ function atualizarEstadoReservaGestor(int $reservaId, int $gestorId, string $est
     return $stmt->rowCount() > 0;
 }
 
-function obterEstatisticasGestor(int $gestorId): array {
+function obterEstatisticasGestor(int $gestorId): array { # Função que recolhe os dados para a dashboard
     $pdo = conectar();
 
     $aloj = $pdo->prepare("

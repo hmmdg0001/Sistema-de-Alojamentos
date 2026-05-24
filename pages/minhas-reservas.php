@@ -1,13 +1,14 @@
 <?php
+# Antes de começar o programa necessita o config.php, auth.php e reservas.php
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
 require_once '../includes/reservas.php';
 exigirLogin();
 
-// Cancelar reserva
+# Processa pedido de cancelamento (antes de carregar a lista)
 if (isset($_POST['cancelar'])) {
     cancelarReserva((int)$_POST['reserva_id'], $_SESSION['user_id']);
-    header('Location: minhas-reservas.php');
+    header('Location: minhas-reservas.php'); // recarrega a página sem reenviar POST
     exit;
 }
 
@@ -18,8 +19,8 @@ $reservas = obterReservasHospede($_SESSION['user_id']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas Reservas — StayManager</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Minhas Reservas — AlojamentosOnline</title>
+    <?php include '../includes/head-css.php'; ?>
 </head>
 <body>
 <?php include '../includes/navbar.php'; ?>
@@ -81,7 +82,6 @@ $reservas = obterReservasHospede($_SESSION['user_id']);
     </div>
     <?php endif; ?>
 </main>
-
-<footer><p>© <?= date('Y') ?> StayManager — Henrique Marinho</p></footer>
+<footer><p>© <?= date('Y') ?> AlojamentosOnline — Henrique Marinho</p></footer>
 </body>
 </html>

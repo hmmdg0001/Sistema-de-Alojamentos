@@ -1,8 +1,10 @@
 <?php
+# Antes de começar o programa necessita o config.php, auth.php e reservas.php
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
 require_once '../includes/reservas.php';
 
+// (int) força número inteiro; protege contra id inválido na URL
 $id = (int)($_GET['id'] ?? 0);
 $pdo = conectar();
 
@@ -20,7 +22,7 @@ if (!$alojamento) {
     exit;
 }
 
-// Buscar avaliações
+// Comentários/avaliações deste alojamento (mais recentes primeiro)
 $av = $pdo->prepare("
     SELECT av.*, u.nome AS hospede_nome
     FROM avaliacoes av
@@ -31,17 +33,17 @@ $av = $pdo->prepare("
 $av->execute([$id]);
 $avaliacoes = $av->fetchAll();
 
-$mediaAv = count($avaliacoes) ? round(array_sum(array_column($avaliacoes, 'pontuacao')) / count($avaliacoes), 1) : null;
+$mediaAv = count($avaliacoes) ? round(array_sum(array_column($avaliacoes, 'pontuacao')) / count($avaliacoes), 1) : null; # Média de avaliações do alojamento
 
-// Datas ocupadas para o calendário
+// Para futuro calendário JS (datas já reservadas ou bloqueadas)
 $datasOcupadas = datasOcupadas($id);
 
 $erro = '';
 $sucesso = '';
 
-// Processar reserva
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservar'])) {
-    exigirLogin();
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservar'])) { # Função de formulário de reserva
+    exigirLogin(); # Redireciona para o login se não estiver autenticado
+
     $checkin    = $_POST['checkin'] ?? '';
     $checkout   = $_POST['checkout'] ?? '';
     $numHosp    = (int)($_POST['num_hospedes'] ?? 1);
@@ -52,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservar'])) {
     } elseif ($checkin >= $checkout) {
         $erro = 'O check-out deve ser após o check-in.';
     } else {
+        # criarReserva valida estadia mínima e disponibilidade internamente
         $reservaId = criarReserva($id, $_SESSION['user_id'], $checkin, $checkout, $numHosp, $notas);
         if ($reservaId) {
             $sucesso = "Reserva criada com sucesso! Nº $reservaId — aguarda confirmação.";
@@ -63,24 +66,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservar'])) {
     }
 }
 
-// Processar avaliação
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['avaliar'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['avaliar'])) { # Formulário de avaliação
     exigirLogin();
     $reservaId  = (int)($_POST['reserva_id'] ?? 0);
     $pontuacao  = (int)($_POST['pontuacao'] ?? 0);
     $comentario = trim($_POST['comentario'] ?? '');
 
     if ($pontuacao >= 1 && $pontuacao <= 5 && $reservaId) {
+        // INSERT IGNORE evita avaliar duas vezes a mesma reserva (unique em reserva_id)
         $ins = $pdo->prepare("INSERT IGNORE INTO avaliacoes (reserva_id, hospede_id, alojamento_id, pontuacao, comentario) VALUES (?,?,?,?,?)");
         $ins->execute([$reservaId, $_SESSION['user_id'], $id, $pontuacao, $comentario]);
-        header("Location: alojamento.php?id=$id");
+        header("Location: alojamento.php?id=$id"); // POST-redirect-GET evita reenvio do formulário
         exit;
     }
 }
 
-// Reservas concluídas do utilizador neste alojamento (para avaliar)
+// Hóspede com estadia concluída e ainda sem avaliação pode avaliar
 $reservaParaAvaliar = null;
-if (utilizadorLogado()) {
+if (utilizadorautenticado()) {
     $rp = $pdo->prepare("
         SELECT r.id FROM reservas r
         LEFT JOIN avaliacoes av ON av.reserva_id = r.id
@@ -96,8 +99,8 @@ if (utilizadorLogado()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($alojamento['nome']) ?> — StayManager</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title><?= htmlspecialchars($alojamento['nome']) ?> — AlojamentosOnline</title>
+    <?php include '../includes/head-css.php'; ?>
     <style>
         .aloj-hero { background: var(--surface2); height: 280px; border-radius: var(--radius); display:flex;align-items:center;justify-content:center;font-size:5rem;margin-bottom:2rem;border:1px solid var(--border); }
         .aloj-grid { display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start; }
@@ -114,9 +117,9 @@ if (utilizadorLogado()) {
     <div class="aloj-hero">🏠</div>
 
     <div class="aloj-grid">
-        <!-- Info -->
+        <!-- Coluna esquerda: informação e avaliações -->
         <div>
-            <h1 style="font-family:'DM Serif Display',serif;font-size:1.9rem;color:var(--accent)"><?= htmlspecialchars($alojamento['nome']) ?></h1>
+            <h1 style="font-size:1.75rem;font-weight:600;color:var(--text)"><?= htmlspecialchars($alojamento['nome']) ?></h1>
             <p style="color:var(--muted);margin-top:.3rem">📍 <?= htmlspecialchars($alojamento['localizacao']) ?></p>
 
             <?php if ($mediaAv): ?>
@@ -137,9 +140,8 @@ if (utilizadorLogado()) {
                 <p style="color:var(--muted);line-height:1.7"><?= nl2br(htmlspecialchars($alojamento['descricao'] ?? 'Sem descrição disponível.')) ?></p>
             </div>
 
-            <!-- Avaliações -->
             <div style="margin-top:2rem">
-                <h3 style="margin-bottom:1rem;font-family:'DM Serif Display',serif">Avaliações</h3>
+                <h3 style="margin-bottom:1rem;font-weight:600">Avaliações</h3>
                 <?php if (empty($avaliacoes)): ?>
                     <p style="color:var(--muted)">Sem avaliações ainda.</p>
                 <?php else: ?>
@@ -155,7 +157,6 @@ if (utilizadorLogado()) {
                     <?php endforeach; ?>
                 <?php endif; ?>
 
-                <!-- Form de avaliação -->
                 <?php if ($reservaParaAvaliar): ?>
                 <div class="card" style="margin-top:1.5rem;border-color:var(--accent)">
                     <h4 style="margin-bottom:1rem">Deixa a tua avaliação</h4>
@@ -180,7 +181,7 @@ if (utilizadorLogado()) {
             </div>
         </div>
 
-        <!-- Formulário de Reserva -->
+        <!-- Coluna direita: formulário de reserva -->
         <div>
             <div class="card" style="position:sticky;top:80px">
                 <h3 style="margin-bottom:1.2rem">Reservar</h3>
@@ -188,7 +189,7 @@ if (utilizadorLogado()) {
                 <?php if ($erro): ?><div class="alert alert-error"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
                 <?php if ($sucesso): ?><div class="alert alert-success"><?= htmlspecialchars($sucesso) ?></div><?php endif; ?>
 
-                <?php if (utilizadorLogado()): ?>
+                <?php if (utilizadorautenticado()): ?>
                 <form method="POST">
                     <div class="form-group">
                         <label>Check-in</label>
@@ -221,6 +222,6 @@ if (utilizadorLogado()) {
     </div>
 </main>
 
-<footer><p>© <?= date('Y') ?> StayManager — Henrique Marinho</p></footer>
+<footer><p>© <?= date('Y') ?> Alojamentos Online — Henrique Marinho</p></footer>
 </body>
 </html>

@@ -1,4 +1,5 @@
 <?php
+# Antes de começar o programa necessita o config.php, auth.php e reservas.php
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
 require_once '../includes/alojamentos.php';
@@ -7,9 +8,9 @@ exigirGestor();
 $gestorId = $_SESSION['user_id'];
 $erro = '';
 $sucesso = '';
-$editar = null;
+$editar = null; 
 
-// Toggle ativo
+# Ativar / desativar alojamento 
 if (isset($_POST['toggle_ativo'])) {
     if (toggleAlojamentoAtivo((int)$_POST['alojamento_id'], $gestorId)) {
         $sucesso = 'Estado do alojamento atualizado.';
@@ -18,7 +19,7 @@ if (isset($_POST['toggle_ativo'])) {
     }
 }
 
-// Guardar (criar ou editar)
+# Criar ou editar alojamento
 if (isset($_POST['guardar'])) {
     $dados = [
         'nome'           => trim($_POST['nome'] ?? ''),
@@ -40,12 +41,14 @@ if (isset($_POST['guardar'])) {
     } else {
         $id = (int)($_POST['alojamento_id'] ?? 0);
         if ($id > 0) {
+            // Modo edição
             if (atualizarAlojamento($id, $gestorId, $dados)) {
                 $sucesso = 'Alojamento atualizado com sucesso.';
             } else {
                 $erro = 'Não foi possível atualizar o alojamento.';
             }
         } else {
+            // Modo criação 
             if (criarAlojamento($gestorId, $dados)) {
                 $sucesso = 'Alojamento criado com sucesso.';
             } else {
@@ -55,6 +58,7 @@ if (isset($_POST['guardar'])) {
     }
 }
 
+# Modo edição
 if (isset($_GET['editar'])) {
     $editar = obterAlojamentoGestor((int)$_GET['editar'], $gestorId);
     if (!$editar) {
@@ -64,6 +68,7 @@ if (isset($_GET['editar'])) {
 }
 
 $alojamentos = obterAlojamentosGestor($gestorId);
+
 $form = $editar ?: [
     'id' => 0, 'nome' => '', 'localizacao' => '', 'descricao' => '',
     'preco_noite' => '', 'capacidade' => 2, 'estadia_minima' => 1,
@@ -74,8 +79,8 @@ $form = $editar ?: [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerir Alojamentos — StayManager</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Gerir Alojamentos — AlojamentosOnline</title>
+    <?php include '../includes/head-css.php'; ?>
 </head>
 <body>
 <?php include '../includes/navbar.php'; ?>
@@ -89,8 +94,9 @@ $form = $editar ?: [
     <?php if ($erro): ?><div class="alert alert-error"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
     <?php if ($sucesso): ?><div class="alert alert-success"><?= htmlspecialchars($sucesso) ?></div><?php endif; ?>
 
+    <!-- Formulário único -->
     <div class="card" style="margin-bottom:2rem">
-        <h3 style="margin-bottom:1.2rem;font-family:'DM Serif Display',serif">
+        <h3 style="margin-bottom:1.2rem;font-weight:600">
             <?= $editar ? 'Editar alojamento' : 'Novo alojamento' ?>
         </h3>
         <form method="POST">
@@ -134,8 +140,9 @@ $form = $editar ?: [
         </form>
     </div>
 
+    <!-- Tabela com todos os alojamentos deste gestor -->
     <div class="card">
-        <h3 style="margin-bottom:1rem;font-family:'DM Serif Display',serif">Os teus alojamentos (<?= count($alojamentos) ?>)</h3>
+        <h3 style="margin-bottom:1rem;font-weight:600">Os teus alojamentos (<?= count($alojamentos) ?>)</h3>
         <?php if (empty($alojamentos)): ?>
             <p style="color:var(--muted)">Ainda não criaste nenhum alojamento.</p>
         <?php else: ?>
@@ -191,7 +198,6 @@ $form = $editar ?: [
         <?php endif; ?>
     </div>
 </main>
-
-<footer><p>© <?= date('Y') ?> StayManager — Henrique Marinho</p></footer>
+<footer><p>© <?= date('Y') ?> AlojamentosOnline — Henrique Marinho</p></footer>
 </body>
 </html>

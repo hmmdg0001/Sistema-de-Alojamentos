@@ -1,15 +1,17 @@
 <?php
-// includes/config.php — Configuração da base de dados
+# Ficheiro responsável para se ligar á base de dados e a URL do website
 
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');       // Alterar para o teu utilizador
-define('DB_PASS', '');           // Alterar para a tua password
+define('DB_USER', 'root');
+define('DB_PASS', '');
 define('DB_NAME', 'tpfinal_db');
 
-define('SITE_NAME', 'Alojamentos Online');
-define('BASE_URL', 'http://localhost/WEB_FINAL/');
+define('SITE_NAME', 'Alojamentos Online'); # Nome do website
+define('BASE_URL', 'http://localhost/WEB_FINAL/'); # URL do website
+define('CSS_URL', BASE_URL . 'css/app.css?v=4'); # CSS com versão (evita cache antigo)
 
-function conectar(): PDO {
+
+function conectar(): PDO { # Função que conecta á base de dados
     static $pdo = null;
     if ($pdo === null) {
         try {

@@ -1,4 +1,5 @@
 <?php
+# Antes de começar o programa necessita o config.php, auth.php e reservas.php
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
 require_once '../includes/reservas.php';
@@ -12,8 +13,8 @@ $reservasRecentes = array_slice(obterReservasGestor($_SESSION['user_id']), 0, 5)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard — StayManager</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Dashboard — AlojamentosOnline</title>
+    <?php include '../includes/head-css.php'; ?>
 </head>
 <body>
 <?php include '../includes/navbar.php'; ?>
@@ -24,6 +25,7 @@ $reservasRecentes = array_slice(obterReservasGestor($_SESSION['user_id']), 0, 5)
         <p>Visão geral dos teus alojamentos e reservas</p>
     </div>
 
+    <!-- Cartões com totais agregados da BD -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-val"><?= (int)($stats['ativos'] ?? 0) ?></div>
@@ -60,7 +62,7 @@ $reservasRecentes = array_slice(obterReservasGestor($_SESSION['user_id']), 0, 5)
     </div>
 
     <div class="card">
-        <h3 style="margin-bottom:1rem;font-family:'DM Serif Display',serif">Reservas recentes</h3>
+        <h3 style="margin-bottom:1rem;font-weight:600">Reservas recentes</h3>
         <?php if (empty($reservasRecentes)): ?>
             <p style="color:var(--muted)">Ainda não há reservas nos teus alojamentos.</p>
         <?php else: ?>
@@ -97,6 +99,6 @@ $reservasRecentes = array_slice(obterReservasGestor($_SESSION['user_id']), 0, 5)
     </div>
 </main>
 
-<footer><p>© <?= date('Y') ?> StayManager — Henrique Marinho</p></footer>
+<footer><p>© <?= date('Y') ?> AlojamentosOnline — Henrique Marinho</p></footer>
 </body>
 </html>

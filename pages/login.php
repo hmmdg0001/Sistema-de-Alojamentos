@@ -1,14 +1,17 @@
 <?php
+# Antes de começar o programa necessita o config.php e auth.php
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
 
 iniciarSessao();
-if (utilizadorLogado()) {
+// Utilizador logado não precisa de ver esta página outra vez
+if (utilizadorautenticado()) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;
 }
 
 $erro = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -26,14 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StayManager — Entrar</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>AlojamentosOnline — Entrar</title>
+    <?php include '../includes/head-css.php'; ?>
 </head>
 <body>
 <div class="auth-wrap">
     <div class="auth-box">
         <h2>Bem-vindo de volta</h2>
-        <p>Entra na tua conta StayManager</p>
+        <p>Entra na tua conta AlojamentosOnline</p>
 
         <?php if ($erro): ?>
             <div class="alert alert-error"><?= htmlspecialchars($erro) ?></div>

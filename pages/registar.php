@@ -1,29 +1,33 @@
 <?php
+# Antes de começar o programa necessita do config.php e auth.php
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
 
-iniciarSessao();
-if (utilizadorLogado()) {
+iniciarSessao(); # Verifica se o utilizar já está autenticado, se o mesmo tiver manda-o para a pagina principal " index.php"
+if (utilizadorautenticado()) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;
 }
 
 $erro = '';
 $sucesso = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Recolhe e limpa os dados do formulário
     $nome     = trim($_POST['nome'] ?? '');
     $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm  = $_POST['confirm'] ?? '';
     $telefone = trim($_POST['telefone'] ?? '');
 
+    // Validações antes de tocar na base de dados
     if ($password !== $confirm) {
         $erro = 'As passwords não coincidem.';
     } elseif (strlen($password) < 6) {
         $erro = 'A password deve ter pelo menos 6 caracteres.';
     } elseif (registar($nome, $email, $password, $telefone)) {
         $sucesso = 'Conta criada com sucesso! Podes agora <a href="login.php" style="color:var(--accent)">entrar</a>.';
-    } else {
+    } else { # Se o email já está registado ele devolve a mensagem
         $erro = 'Este email já está registado.';
     }
 }
@@ -33,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StayManager — Registar</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>AlojamentosOnline — Registar</title>
+    <?php include '../includes/head-css.php'; ?>
 </head>
 <body>
 <div class="auth-wrap">

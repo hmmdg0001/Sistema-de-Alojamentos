@@ -1,9 +1,8 @@
 <?php
-// includes/alojamentos.php — Funções de gestão de alojamentos (gestor)
-
+# Antes de começar o programa necessita o config.php
 require_once __DIR__ . '/config.php';
 
-function obterAlojamentosGestor(int $gestorId): array {
+function obterAlojamentosGestor(int $gestorId): array { # Função que vai listar os alojamentos do gestor com as reservas totais e a média de avaliações
     $pdo = conectar();
     $stmt = $pdo->prepare("
         SELECT a.*,
@@ -20,14 +19,14 @@ function obterAlojamentosGestor(int $gestorId): array {
     return $stmt->fetchAll();
 }
 
-function obterAlojamentoGestor(int $id, int $gestorId): array|false {
+function obterAlojamentoGestor(int $id, int $gestorId): array|false { # Função que garante que um alojamento especifico só se pertencer ao gestor
     $pdo = conectar();
     $stmt = $pdo->prepare("SELECT * FROM alojamentos WHERE id = ? AND gestor_id = ?");
     $stmt->execute([$id, $gestorId]);
     return $stmt->fetch() ?: false;
 }
 
-function criarAlojamento(int $gestorId, array $dados): int|false {
+function criarAlojamento(int $gestorId, array $dados): int|false { # Função para criar um novo alojamento e cria um id unico para o alojamento
     $pdo = conectar();
     $stmt = $pdo->prepare("
         INSERT INTO alojamentos (gestor_id, nome, localizacao, descricao, preco_noite, capacidade, estadia_minima, ativo)
@@ -45,7 +44,7 @@ function criarAlojamento(int $gestorId, array $dados): int|false {
     return $ok ? (int) $pdo->lastInsertId() : false;
 }
 
-function atualizarAlojamento(int $id, int $gestorId, array $dados): bool {
+function atualizarAlojamento(int $id, int $gestorId, array $dados): bool { # Função para atualizar um alojamento
     $pdo = conectar();
     $stmt = $pdo->prepare("
         UPDATE alojamentos
@@ -66,7 +65,7 @@ function atualizarAlojamento(int $id, int $gestorId, array $dados): bool {
     return $stmt->rowCount() > 0;
 }
 
-function toggleAlojamentoAtivo(int $id, int $gestorId): bool {
+function toggleAlojamentoAtivo(int $id, int $gestorId): bool { # Função que alterna se o alojamento está ativo ou inativo
     $pdo = conectar();
     $stmt = $pdo->prepare("
         UPDATE alojamentos SET ativo = NOT ativo

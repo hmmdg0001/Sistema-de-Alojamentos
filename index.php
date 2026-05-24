@@ -1,8 +1,12 @@
 <?php
+
+# Antes de começar o programa necessita do config.php e auth.php
 require_once 'includes/config.php';
 require_once 'includes/auth.php';
 
-$pdo = conectar();
+$pdo = conectar(); # Conecta á base de dados
+
+# Lista os alojamentos ativos
 $stmt = $pdo->query("
     SELECT a.*, u.nome AS gestor_nome,
            ROUND(AVG(av.pontuacao),1) AS media_avaliacao,
@@ -22,7 +26,7 @@ $alojamentos = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alojamentos Online</title>
-    <link rel="stylesheet" href="css/style.css">
+    <?php include 'includes/head-css.php'; ?>
 </head>
 <body>
 <?php include 'includes/navbar.php'; ?>
@@ -52,7 +56,7 @@ $alojamentos = $stmt->fetchAll();
                     <span style="color:var(--muted)"><?= $a['media_avaliacao'] ?> (<?= $a['total_avaliacoes'] ?> avaliações)</span>
                 </p>
                 <?php endif; ?>
-                <p class="preco">€<?= number_format($a['preco_noite'], 2) ?> <span style="color:var(--muted);font-weight:400;font-size:.85rem">/ noite</span></p>
+                <p class="preco">€<?= number_format($a['preco_noite'], 2) ?> <span>/ noite</span></p>
                 <p style="color:var(--muted);font-size:.8rem;margin-top:.3rem">Estadia mínima: <?= $a['estadia_minima'] ?> noite(s)</p>
             </div>
         </a>
@@ -61,6 +65,6 @@ $alojamentos = $stmt->fetchAll();
     <?php endif; ?>
 </main>
 
-<footer><p>© <?= date('Y') ?> StayManager — Henrique Marinho</p></footer>
+<footer><p>© <?= date('Y') ?> AlojamentosOnline — Henrique Marinho</p></footer>
 </body>
 </html>
