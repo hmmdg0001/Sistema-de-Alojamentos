@@ -20,7 +20,11 @@ $reservas = obterReservasHospede($_SESSION['user_id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minhas Reservas — AlojamentosOnline</title>
-    <?php include '../includes/head-css.php'; ?>
+    <meta name="color-scheme" content="light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= CSS_URL ?>">
 </head>
 <body>
 <?php include '../includes/navbar.php'; ?>
@@ -58,7 +62,7 @@ $reservas = obterReservasHospede($_SESSION['user_id']);
                         <td>#<?= $r['id'] ?></td>
                         <td>
                             <strong><?= htmlspecialchars($r['alojamento_nome']) ?></strong><br>
-                            <span style="color:var(--muted);font-size:.82rem">📍 <?= htmlspecialchars($r['localizacao']) ?></span>
+                            <span style="color:var(--muted);font-size:.82rem"> <?= htmlspecialchars($r['localizacao']) ?></span>
                         </td>
                         <td><?= date('d/m/Y', strtotime($r['data_checkin'])) ?></td>
                         <td><?= date('d/m/Y', strtotime($r['data_checkout'])) ?></td>

@@ -100,7 +100,11 @@ if (utilizadorautenticado()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($alojamento['nome']) ?> — AlojamentosOnline</title>
-    <?php include '../includes/head-css.php'; ?>
+    <meta name="color-scheme" content="light">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= CSS_URL ?>">
     <style>
         .aloj-hero { background: var(--surface2); height: 280px; border-radius: var(--radius); display:flex;align-items:center;justify-content:center;font-size:5rem;margin-bottom:2rem;border:1px solid var(--border); }
         .aloj-grid { display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start; }
@@ -120,7 +124,7 @@ if (utilizadorautenticado()) {
         <!-- Coluna esquerda: informação e avaliações -->
         <div>
             <h1 style="font-size:1.75rem;font-weight:600;color:var(--text)"><?= htmlspecialchars($alojamento['nome']) ?></h1>
-            <p style="color:var(--muted);margin-top:.3rem">📍 <?= htmlspecialchars($alojamento['localizacao']) ?></p>
+            <p style="color:var(--muted);margin-top:.3rem"> <?= htmlspecialchars($alojamento['localizacao']) ?></p>
 
             <?php if ($mediaAv): ?>
             <p style="margin:.5rem 0">

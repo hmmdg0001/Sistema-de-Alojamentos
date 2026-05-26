@@ -8,7 +8,7 @@ define('DB_NAME', 'tpfinal_db');
 
 define('SITE_NAME', 'Alojamentos Online'); # Nome do website
 define('BASE_URL', 'http://localhost/WEB_FINAL/'); # URL do website
-define('CSS_URL', BASE_URL . 'css/app.css?v=4'); # CSS com versão (evita cache antigo)
+define('CSS_URL', BASE_URL . 'css/style.css?v=5'); # CSS com versão (evita cache antigo)
 
 
 function conectar(): PDO { # Função que conecta á base de dados

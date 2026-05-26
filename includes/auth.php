@@ -9,10 +9,6 @@ function iniciarSessao(): void {
     }
 }
 
-/**
- * Valida email + password na BD e, se corretos, guarda dados na sessão.
- * A password na BD está em hash (password_hash); password_verify compara.
- */
 function login(string $email, string $password): bool { # Função que vai validar o login do utilizador
     $pdo = conectar();
     $stmt = $pdo->prepare("SELECT * FROM utilizadores WHERE email = ?");
@@ -65,7 +61,6 @@ function utilizadorAtual(): array { # Verifica o utilizador atual e devolve em u
     $stmt->execute([$_SESSION['user_id']]);
     return $stmt->fetch() ?: [];
 }
-
 
  # Função que vai registar um utilizador novo na base de dados
 function registar(string $nome, string $email, string $password, string $telefone, string $tipo = 'hospede'): bool {
