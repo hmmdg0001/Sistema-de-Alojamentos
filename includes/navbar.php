@@ -4,7 +4,7 @@
 require_once __DIR__ . '/auth.php';
 iniciarSessao();
 
-$logado = utilizadorautenticado();
+$autenticado = utilizadorautenticado();
 $tipo   = $_SESSION['user_tipo'] ?? '';
 $nome   = $_SESSION['user_nome'] ?? '';
 $currentPage = basename($_SERVER['PHP_SELF']);
@@ -12,7 +12,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <nav>
     <a href="<?= BASE_URL ?>index.php" class="nav-logo">Alojamentos Online</a>
     <div class="nav-links">
-        <?php if ($logado): ?>
+        <?php if ($autenticado): ?>
             <!-- Menu do utilizador autenticado -->
             <a href="<?= BASE_URL ?>index.php" class="<?= $currentPage === 'index.php' ? 'active' : '' ?>">Alojamentos</a>
             <a href="<?= BASE_URL ?>pages/minhas-reservas.php" class="<?= $currentPage === 'minhas-reservas.php' ? 'active' : '' ?>">Minhas Reservas</a>

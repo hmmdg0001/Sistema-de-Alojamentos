@@ -4,7 +4,7 @@ require_once '../includes/config.php';
 require_once '../includes/auth.php';
 
 iniciarSessao();
-// Utilizador logado não precisa de ver esta página outra vez
+// Utilizador autenticado não precisa de ver esta página outra vez
 if (utilizadorautenticado()) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;
