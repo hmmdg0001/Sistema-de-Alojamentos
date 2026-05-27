@@ -5,8 +5,8 @@ require_once '../includes/auth.php';
 require_once '../includes/reservas.php';
 exigirGestor();
 
-$stats = obterEstatisticasGestor($_SESSION['user_id']);
-$reservasRecentes = array_slice(obterReservasGestor($_SESSION['user_id']), 0, 5);
+$stats = obterEstatisticasGestor($_SESSION['user_id']); # mostra as estatisticas dependendo do id do utilizador
+$reservasRecentes = array_slice(obterReservasGestor($_SESSION['user_id']), 0, 5); # obtem as reservas do utilizador dependendo do id do mesmo
 ?>
 <!DOCTYPE html>
 <html lang="pt">
@@ -21,12 +21,12 @@ $reservasRecentes = array_slice(obterReservasGestor($_SESSION['user_id']), 0, 5)
     <link rel="stylesheet" href="<?= CSS_URL ?>">
 </head>
 <body>
-<?php include '../includes/navbar.php'; ?>
+<?php include '../includes/navbar.php'; ?> 
 
 <main class="container">
     <div class="page-header">
         <h1>Dashboard</h1>
-        <p>Visão geral dos teus alojamentos e reservas</p>
+        <p>Visão geral dos alojamentos e reservas</p>
     </div>
 
     <!-- Cartões com totais agregados da BD -->
@@ -102,7 +102,6 @@ $reservasRecentes = array_slice(obterReservasGestor($_SESSION['user_id']), 0, 5)
         <?php endif; ?>
     </div>
 </main>
-
 <footer><p>© <?= date('Y') ?> AlojamentosOnline — Henrique Marinho</p></footer>
 </body>
 </html>

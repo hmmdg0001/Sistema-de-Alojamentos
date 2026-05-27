@@ -20,7 +20,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <?php if ($tipo === 'gestor'): ?>
                 <!-- Menu extra só para gestores -->
                 <a href="<?= BASE_URL ?>pages/dashboard.php" class="<?= $currentPage === 'dashboard.php' ? 'active' : '' ?>">Dashboard</a>
-                <a href="<?= BASE_URL ?>pages/gerir-alojamentos.php" class="<?= $currentPage === 'gerir-alojamentos.php' ? 'active' : '' ?>">Alojamentos</a>
+                <a href="<?= BASE_URL ?>pages/gerir-alojamentos.php" class="<?= $currentPage === 'gerir-alojamentos.php' ? 'active' : '' ?>">Gerir Alojamentos</a>
                 <a href="<?= BASE_URL ?>pages/gerir-reservas.php" class="<?= $currentPage === 'gerir-reservas.php' ? 'active' : '' ?>">Reservas</a>
             <?php endif; ?>
 

@@ -82,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:.5rem">Criar Conta</button>
         </form>
-
         <p style="text-align:center;margin-top:1.2rem;color:var(--muted);font-size:.9rem">
             Já tens conta? <a href="login.php" style="color:var(--accent)">Entrar</a>
         </p>

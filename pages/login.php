@@ -41,11 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="auth-box">
         <h2>Bem-vindo de volta</h2>
         <p>Entra na tua conta AlojamentosOnline</p>
-
         <?php if ($erro): ?>
             <div class="alert alert-error"><?= htmlspecialchars($erro) ?></div>
         <?php endif; ?>
-
         <form method="POST">
             <div class="form-group">
                 <label>Email</label>
@@ -57,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:.5rem">Entrar</button>
         </form>
-
         <p style="text-align:center;margin-top:1.2rem;color:var(--muted);font-size:.9rem">
             Não tens conta? <a href="registar.php" style="color:var(--accent)">Regista-te</a>
         </p>

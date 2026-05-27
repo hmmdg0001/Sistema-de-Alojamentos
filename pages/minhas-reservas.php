@@ -12,7 +12,7 @@ if (isset($_POST['cancelar'])) {
     exit;
 }
 
-$reservas = obterReservasHospede($_SESSION['user_id']);
+$reservas = obterReservasHospede($_SESSION['user_id']); # Obtem as reservas do hospede dependendo do id do utilizador
 ?>
 <!DOCTYPE html>
 <html lang="pt">
@@ -28,13 +28,11 @@ $reservas = obterReservasHospede($_SESSION['user_id']);
 </head>
 <body>
 <?php include '../includes/navbar.php'; ?>
-
 <main class="container">
     <div class="page-header">
         <h1>Minhas Reservas</h1>
-        <p>Histórico e gestão das tuas reservas</p>
+        <p>Histórico e gestão das suas reservas</p>
     </div>
-
     <?php if (empty($reservas)): ?>
         <div class="card" style="text-align:center;padding:3rem;color:var(--muted)">
             <p style="font-size:2rem">🗓️</p>

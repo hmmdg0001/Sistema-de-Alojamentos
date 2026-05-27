@@ -75,7 +75,6 @@ $estadosFiltro = ['', 'pendente', 'confirmada', 'concluida', 'cancelada'];
         </a>
         <?php endforeach; ?>
     </div>
-
     <div class="card">
         <?php if (empty($reservas)): ?>
             <p style="color:var(--muted);text-align:center;padding:2rem">

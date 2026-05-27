@@ -22,7 +22,6 @@ $alojamentos = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="pt">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,10 +32,8 @@ $alojamentos = $stmt->fetchAll();
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= CSS_URL ?>">
 </head>
-
 <body>
     <?php include 'includes/navbar.php'; ?>
-
     <main class="container">
         <div class="page-header">
             <h1>Alojamentos Disponíveis</h1>
@@ -77,5 +74,4 @@ $alojamentos = $stmt->fetchAll();
         <p>© <?= date('Y') ?> AlojamentosOnline — Henrique Marinho</p>
     </footer>
 </body>
-
 </html>
