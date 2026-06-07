@@ -39,7 +39,6 @@ $alojamentos = $stmt->fetchAll();
             <h1>Alojamentos Disponíveis</h1>
             <p>Encontra o alojamento perfeito para a tua próxima estadia</p>
         </div>
-
         <?php if (empty($alojamentos)): ?>
             <div class="card" style="text-align:center;padding:3rem;color:var(--muted)">
                 <p style="font-size:2rem">🏠</p>

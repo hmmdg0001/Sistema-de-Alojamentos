@@ -35,7 +35,7 @@ function criarReserva(int $alojamentoId, int $hospedeId, string $checkin, string
     if (!$alojamento) return false;
 
     $noites = (new DateTime($checkout))->diff(new DateTime($checkin))->days; # Calcula as noites e impede que existam 2 reservas no mesmo dia
-    if ($noites < $alojamento['estadia_minima']) return false; # Vericica a estadia minima
+    if ($noites < $alojamento['estadia_minima']) return false; # Verifica a estadia minima
     if (!verificarDisponibilidade($alojamentoId, $checkin, $checkout)) return false; # Verifica se o alojamento está disponivel
 
     $precoTotal = $noites * $alojamento['preco_noite']; # Calcula o preço total
